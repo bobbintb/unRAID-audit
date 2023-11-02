@@ -9,5 +9,20 @@ jobs:
         shell: bash
         run: |
           #!/bin/bash
-          echo "Current working directory:"
-          pwd
+          KERNEL_VERSION="6.1.49"
+          major_version="6"
+          UNRAID_VERSION="6.4.12"
+          apt -y install make gcc bison libelf-dev
+          mkdir -p unraid
+          tar -xvf linux-$KERNEL_VERSION.tar.xz -C linux --strip-components 1
+          unzip unRAIDServer-$UNRAID_VERSION-x86_64.zip -d unRAIDServer
+          cd unRAIDServer
+          unsquashfs -d patches bzfirmware src
+          cd ..
+          cp -r unRAIDServer/patches/src/linux-*-Unraid/. linux/
+          cd linux
+          find . -type f -iname '*.patch' -print0 | xargs -n1 -0 patch -p1 -i
+          sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
+          make oldconfig
+          make -j$(nproc) bzImage
+          make -j$(nproc)
