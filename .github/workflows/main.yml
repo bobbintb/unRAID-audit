@@ -12,7 +12,7 @@ jobs:
           KERNEL_VERSION="6.1.49"
           major_version="6"
           UNRAID_VERSION="6.4.12"
-          apt -y install make gcc bison libelf-dev
+          sudo apt -y install make gcc bison libelf-dev
           mkdir -p unraid
           tar -xvf linux-$KERNEL_VERSION.tar.xz -C linux --strip-components 1
           unzip unRAIDServer-$UNRAID_VERSION-x86_64.zip -d unRAIDServer
