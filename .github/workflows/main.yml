@@ -1,8 +1,6 @@
 name: Compile kernel
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
 jobs:
   pull_and_edit:
     runs-on: ubuntu-latest
