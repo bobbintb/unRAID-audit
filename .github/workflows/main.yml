@@ -27,6 +27,6 @@ jobs:
           cd linux
           find . -type f -iname '*.patch' -print0 | xargs -n1 -0 patch -p1 -i
           sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
-          make oldconfig
-          make -j$(nproc) bzImage
-          make -j$(nproc)
+          yes "" | make oldconfig
+          yes "" | make -j$(nproc) bzImage
+          yes "" | make -j$(nproc)
