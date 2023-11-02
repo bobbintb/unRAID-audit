@@ -18,8 +18,8 @@ jobs:
           wget -nvc https://mirrors.edge.kernel.org/pub/linux/kernel/v$major_version.x/linux-$KERNEL_VERSION.tar.xz
           wget -nvc https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer-$UNRAID_VERSION-x86_64.zip
           mkdir -p linux
-          tar -xvf linux-$KERNEL_VERSION.tar.xz -C linux --strip-components 1
-          unzip unRAIDServer-$UNRAID_VERSION-x86_64.zip -d unRAIDServer
+          tar -xf linux-$KERNEL_VERSION.tar.xz -C linux --strip-components 1
+          unzip unRAIDServer-$UNRAID_VERSION-x86_64.zip -dq unRAIDServer
           cd unRAIDServer
           unsquashfs -d patches bzfirmware src
           cd ..
@@ -27,6 +27,6 @@ jobs:
           cd linux
           find . -type f -iname '*.patch' -print0 | xargs -n1 -0 patch -p1 -i
           sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
-          yes "" | make oldconfig
-          yes "" | make -j$(nproc) bzImage
-          yes "" | make -j$(nproc)
+          yes "" | make oldconfig > /dev/null
+          yes "" | make -j$(nproc) bzImage > /dev/null
+          yes "" | make -j$(nproc) > /dev/null
