@@ -5,10 +5,6 @@ jobs:
   pull_and_edit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.PAT }}
       - name: Test
         shell: bash
         run: |
