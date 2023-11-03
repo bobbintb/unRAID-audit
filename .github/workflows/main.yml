@@ -36,7 +36,6 @@ jobs:
           echo "--------------------Patching...--------------------"
           find . -type f -iname '*.patch' -print0 | xargs -n1 -0 patch -p1 -i
           sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
-          cat .config
           echo "--------------------make oldconfig--------------------"
           yes "" | make oldconfig
           echo "--------------------make -j$(nproc) bzImage--------------------"
