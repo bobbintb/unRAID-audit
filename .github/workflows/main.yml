@@ -9,7 +9,7 @@ jobs:
         shell: bash
         run: |
           #!/bin/bash
-          apt install xmlstarlet
+          sudo apt -y install xmlstarlet
           wget "https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer.plg"
           # Provide the XML file path as a command-line argument
           xml_file="unRAIDServer.plg"
