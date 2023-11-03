@@ -38,7 +38,7 @@ jobs:
           sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
           cat .config
           echo "--------------------make oldconfig--------------------"
-          make oldconfig
+          yes "" | make oldconfig
           echo "--------------------make -j$(nproc) bzImage--------------------"
           #yes "" | make -j$(nproc) bzImage > /dev/null
           echo "--------------------make -j$(nproc)--------------------"
