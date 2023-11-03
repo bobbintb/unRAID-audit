@@ -9,9 +9,11 @@ jobs:
         shell: bash
         run: |
           #!/bin/bash
+          cat << End >> ~/.profile
           export KERNEL_VERSION="6.1.49"
           export MAJOR_VERSION="6"
           export UNRAID_VERSION="6.12.4"
+          End
           echo "----------------------------------------[Kernel version: $KERNEL_VERSION]---------------------------------------------"
           echo "----------------------------------------[Kernel major version: $MAJOR_VERSION]----------------------------------------"
           echo "----------------------------------------[unRAID version: $UNRAID_VERSION]---------------------------------------------"
