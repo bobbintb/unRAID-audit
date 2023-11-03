@@ -2,45 +2,52 @@ name: Compile kernel
 on:
   workflow_dispatch:
 jobs:
-  pull_and_edit:
+  Compile_kernel:
     runs-on: ubuntu-latest
     steps:
-      - name: Test
+      - name: Setup environment
         shell: bash
         run: |
           #!/bin/bash
           KERNEL_VERSION="6.1.49"
           major_version="6"
           UNRAID_VERSION="6.12.4"
-          echo "----------------------------------------Kernel version: $KERNEL_VERSION----------------------------------------"
-          echo "----------------------------------------Kernel major version: $major_version----------------------------------------"
-          echo "----------------------------------------unRAID version: $UNRAID_VERSION----------------------------------------"
+          echo "----------------------------------------[Kernel version: $KERNEL_VERSION]---------------------------------------------"
+          echo "----------------------------------------[Kernel major version: $major_version]----------------------------------------"
+          echo "----------------------------------------[unRAID version: $UNRAID_VERSION]---------------------------------------------"
+          echo "----------------------------------------[Installing dependencies]-----------------------------------------------------"
           sudo apt -y install make gcc bison libelf-dev
           mkdir -p unraid
           cd unraid
-          echo "----------------------------------------Downloading kernel...----------------------------------------"
+          echo "----------------------------------------[Downloading kernel...]-------------------------------------------------------"
           wget -nvc https://mirrors.edge.kernel.org/pub/linux/kernel/v$major_version.x/linux-$KERNEL_VERSION.tar.xz
-          echo "----------------------------------------Downloading unRAID...----------------------------------------"
+          echo "----------------------------------------[Downloading unRAID...]-------------------------------------------------------"
           wget -nvc https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer-$UNRAID_VERSION-x86_64.zip
+      - name: Preparing build
+        shell: bash
+        run: |
           mkdir -p linux
-          echo "----------------------------------------Extracting kernel...----------------------------------------"
+          echo "----------------------------------------[Extracting kernel...]--------------------------------------------------------"
           tar -xf linux-$KERNEL_VERSION.tar.xz -C linux --strip-components 1
           unzip unRAIDServer-$UNRAID_VERSION-x86_64.zip -d unRAIDServer
-          echo "----------------------------------------Extracting unRAID...----------------------------------------"
+          echo "----------------------------------------Extracting unRAID...----------------------------------------------------------"
           cd unRAIDServer
-          echo "----------------------------------------Unsquashing file system...----------------------------------------"
+          echo "----------------------------------------[Unsquashing file system...]--------------------------------------------------"
           unsquashfs -d patches bzfirmware src
           cd ..
           cp -r unRAIDServer/patches/src/linux-*-Unraid/. linux/
           cd linux
-          echo "----------------------------------------Patching...----------------------------------------"
+          echo "----------------------------------------[Patching...]-----------------------------------------------------------------"
           find . -type f -iname '*.patch' -print0 | xargs -n1 -0 patch -p1 -i
           sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
-          echo "----------------------------------------make oldconfig----------------------------------------"
+      - name: Building new kernel
+        shell: bash
+        run: |
+          echo "----------------------------------------[make oldconfig]-------------------------------------------------------------"
           make olddefconfig
-          echo "----------------------------------------make -j$(nproc) bzImage----------------------------------------"
+          echo "----------------------------------------[make -j$(nproc) -s bzImage]-------------------------------------------------"
           make -j$(nproc) -s bzImage
-          echo "----------------------------------------make -j$(nproc) ----------------------------------------"
+          echo "----------------------------------------[make -j$(nproc) -s]---------------------------------------------------------"
           make -j$(nproc) -s
       - name: Git Commit 
         run: |
