@@ -50,7 +50,25 @@ jobs:
           echo "----------------------------------------[make oldconfig]-------------------------------------------------------------"
           make olddefconfig
           echo "----------------------------------------[make -j$(nproc) -s bzImage]-------------------------------------------------"
-          #make -j$(nproc) -s bzImage
+          make -j$(nproc) -s bzImage
           echo "----------------------------------------[make -j$(nproc) -s]---------------------------------------------------------"
-          #make -j$(nproc) -s
+          make -j$(nproc) -s
+          cd ..
+          mkdir -p release
+          cp linux/arch/x86_64/boot/bzImage release/bzimage
+          cd release
+          sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
+      - name: Git Commit 
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -a -m "Updated kernel"
+          git add ./unraid/release/bzimage
+          git add ./unraid/release/bzimage.sha256
+      - name: Git Push
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PAT }}
+          branch: master
+          force: true
 
