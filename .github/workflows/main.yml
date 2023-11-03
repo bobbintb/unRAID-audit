@@ -9,76 +9,20 @@ jobs:
         shell: bash
         run: |
           #!/bin/bash
-          
           wget "https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer.plg">
-          
           # Provide the XML file path as a command-line argument
           xml_file="unRAIDServer.plg"
-          
           # Check if the XML file exists
           if [ ! -f "$xml_file" ]; then
             echo "XML file not found: $xml_file"
             exit 1
           fi
-          
           # Use xmlstarlet to extract and assign entity values to variables
           while IFS= read -r entity; do
             entity_name="$(echo "$entity" | cut -d ' ' -f 1)"
             entity_value="$(echo "$entity" | cut -d ' ' -f 2-)"
             declare "entity_$entity_name=$entity_value"
           done < <(xmlstarlet sel -t -v "//*[starts-with(name(), '&')]" "$xml_file")
-          
           # Output the variables
           echo "Entity variables:"
           compgen -A variable | grep '^entity_'
-
-      - name: Setup environment
-        shell: bash
-        run: |
-          #!/bin/bash
-          echo "----------------------------------------[Kernel version: $KERNEL_VERSION]---------------------------------------------"
-          echo "----------------------------------------[Kernel major version: $MAJOR_VERSION]----------------------------------------"
-          echo "----------------------------------------[unRAID version: $UNRAID_VERSION]---------------------------------------------"
-          echo "----------------------------------------[Installing dependencies]-----------------------------------------------------"
-          sudo apt -y install make gcc bison libelf-dev
-          mkdir -p unraid
-          cd unraid
-          echo "----------------------------------------[Downloading kernel...]-------------------------------------------------------"
-          wget -nvc https://mirrors.edge.kernel.org/pub/linux/kernel/v$MAJOR_VERSION.x/linux-$KERNEL_VERSION.tar.xz
-          echo "----------------------------------------[Downloading unRAID...]-------------------------------------------------------"
-          wget -nvc https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer-$UNRAID_VERSION-x86_64.zip
-      - name: Preparing build
-        shell: bash
-        run: |
-          cd unraid
-          mkdir -p linux
-          echo "----------------------------------------[Extracting kernel...]--------------------------------------------------------"
-          tar -xf linux-$KERNEL_VERSION.tar.xz -C linux --strip-components 1
-          unzip unRAIDServer-$UNRAID_VERSION-x86_64.zip -d unRAIDServer
-          echo "----------------------------------------Extracting unRAID...----------------------------------------------------------"
-          cd unRAIDServer
-          echo "----------------------------------------[Unsquashing file system...]--------------------------------------------------"
-          unsquashfs -d patches bzfirmware src
-          cd ..
-          cp -r unRAIDServer/patches/src/linux-*-Unraid/. linux/
-          cd linux
-          echo "----------------------------------------[Patching...]-----------------------------------------------------------------"
-          find . -type f -iname '*.patch' -print0 | xargs -n1 -0 patch -p1 -i
-          sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
-      - name: Building new kernel
-        shell: bash
-        run: |
-          cd unraid/linux
-          echo "----------------------------------------[make oldconfig]-------------------------------------------------------------"
-          make olddefconfig
-          echo "----------------------------------------[make -j$(nproc) -s bzImage]-------------------------------------------------"
-          make -j$(nproc) -s bzImage
-          echo "----------------------------------------[make -j$(nproc) -s]---------------------------------------------------------"
-          make -j$(nproc) -s
-          cd ..
-          mkdir -p release
-          cp linux/arch/x86_64/boot/bzImage release/bzimage
-          cd release
-          sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
-
-
