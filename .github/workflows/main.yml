@@ -39,6 +39,6 @@ jobs:
           echo "--------------------make oldconfig--------------------"
           make oldconfig
           echo "--------------------make -j$(nproc) bzImage--------------------"
-          yes "" | make -j$(nproc) bzImage > /dev/null
+          #yes "" | make -j$(nproc) bzImage > /dev/null
           echo "--------------------make -j$(nproc)--------------------"
-          yes "" | make -j$(nproc) > /dev/null
+          #yes "" | make -j$(nproc) > /dev/null
