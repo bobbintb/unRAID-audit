@@ -37,8 +37,8 @@ jobs:
           find . -type f -iname '*.patch' -print0 | xargs -n1 -0 patch -p1 -i
           sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
           echo "--------------------make oldconfig--------------------"
-          yes "" | make oldconfig > /dev/null
+          yes "" | make oldconfig
           echo "--------------------make -j$(nproc) bzImage--------------------"
-          #yes "" | make -j$(nproc) bzImage > /dev/null
+          make -j$(nproc) bzImage
           echo "--------------------make -j$(nproc)--------------------"
-          #yes "" | make -j$(nproc) > /dev/null
+          make -j$(nproc)
