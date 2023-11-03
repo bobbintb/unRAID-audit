@@ -28,6 +28,7 @@ jobs:
       - name: Preparing build
         shell: bash
         run: |
+          cd unraid
           mkdir -p linux
           echo "----------------------------------------[Extracting kernel...]--------------------------------------------------------"
           tar -xf linux-$KERNEL_VERSION.tar.xz -C linux --strip-components 1
@@ -45,6 +46,7 @@ jobs:
       - name: Building new kernel
         shell: bash
         run: |
+          cd unraid/linux
           echo "----------------------------------------[make oldconfig]-------------------------------------------------------------"
           make olddefconfig
           echo "----------------------------------------[make -j$(nproc) -s bzImage]-------------------------------------------------"
