@@ -1,15 +1,37 @@
 name: Compile kernel
 on:
   workflow_dispatch:
-env:
-  DAY_OF_WEEK: Monday
-  KERNEL_VERSION: 6.1.49
-  MAJOR_VERSION: 6
-  UNRAID_VERSION: 6.12.4
 jobs:
   Compile_kernel:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup environment
+        shell: bash
+        run: |
+          #!/bin/bash
+          
+          wget "https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer.plg">
+          
+          # Provide the XML file path as a command-line argument
+          xml_file="unRAIDServer.plg"
+          
+          # Check if the XML file exists
+          if [ ! -f "$xml_file" ]; then
+            echo "XML file not found: $xml_file"
+            exit 1
+          fi
+          
+          # Use xmlstarlet to extract and assign entity values to variables
+          while IFS= read -r entity; do
+            entity_name="$(echo "$entity" | cut -d ' ' -f 1)"
+            entity_value="$(echo "$entity" | cut -d ' ' -f 2-)"
+            declare "entity_$entity_name=$entity_value"
+          done < <(xmlstarlet sel -t -v "//*[starts-with(name(), '&')]" "$xml_file")
+          
+          # Output the variables
+          echo "Entity variables:"
+          compgen -A variable | grep '^entity_'
+
       - name: Setup environment
         shell: bash
         run: |
@@ -58,17 +80,5 @@ jobs:
           cp linux/arch/x86_64/boot/bzImage release/bzimage
           cd release
           sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
-      - name: Git Commit 
-        run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git commit -a -m "Updated kernel"
-          git add ./unraid/release/bzimage
-          git add ./unraid/release/bzimage.sha256
-      - name: Git Push
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.PAT }}
-          branch: master
-          force: true
+
 
