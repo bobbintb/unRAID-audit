@@ -25,7 +25,7 @@ jobs:
           mkdir -p linux
           echo "Extracting kernel..."
           tar -xf linux-$KERNEL_VERSION.tar.xz -C linux --strip-components 1
-          unzip unRAIDServer-$UNRAID_VERSION-x86_64.zip -dq unRAIDServer
+          unzip unRAIDServer-$UNRAID_VERSION-x86_64.zip -d unRAIDServer
           echo "Extracting unRAID..."
           cd unRAIDServer
           unsquashfs -d patches bzfirmware src
