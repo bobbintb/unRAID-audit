@@ -39,6 +39,6 @@ jobs:
           echo "----------------------------------------make oldconfig----------------------------------------"
           make olddefconfig
           echo "----------------------------------------make -j$(nproc) bzImage----------------------------------------"
-          #make -j$(nproc) bzImage
+          #make -s -j$(nproc) bzImage
           echo "----------------------------------------make -j$(nproc)----------------------------------------"
-          #make -j$(nproc)
+          #make -s -j$(nproc)
