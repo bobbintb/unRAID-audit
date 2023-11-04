@@ -9,7 +9,6 @@ jobs:
         shell: bash
         run: |
           #!/bin/bash
-          sudo apt -y install xmlstarlet
           wget "https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer.plg"
           # Provide the XML file path as a command-line argument
           xml_file="unRAIDServer.plg"
@@ -18,12 +17,13 @@ jobs:
             echo "XML file not found: $xml_file"
             exit 1
           fi
-          # Use xmlstarlet to extract and assign entity values to variables
-          while IFS= read -r entity; do
-            entity_name="$(echo "$entity" | cut -d ' ' -f 1)"
-            entity_value="$(echo "$entity" | cut -d ' ' -f 2-)"
-            declare "entity_$entity_name=$entity_value"
-          done < <(xmlstarlet sel -t -v "//*[starts-with(name(), '&')]" "$xml_file")
-          # Output the variables
-          echo "Entity variables:"
-          compgen -A variable | grep '^entity_'
+          echo "{KERNEL_VERSION}={sed -n 's/<!ENTITY version\s*"\(.*\)">/\1/p' "$xml_file"}" >> "$GITHUB_ENV"
+          echo "{MAJOR_VERSION}={${number%%.*}}" >> "$GITHUB_ENV"
+          echo "{UNRAID_VERSION}={sed -n 's/<!ENTITY kernel\s*"\([0-9.]*\)-Unraid">/\1/p' "$xml_file"}" >> "$GITHUB_ENV"
+      - name: Setup environment
+        shell: bash
+        run: |
+          #!/bin/bash
+          echo "----------------------------------------[Kernel version: $KERNEL_VERSION]---------------------------------------------"
+          echo "----------------------------------------[Kernel major version: $MAJOR_VERSION]----------------------------------------"
+          echo "----------------------------------------[unRAID version: $UNRAID_VERSION]---------------------------------------------"
