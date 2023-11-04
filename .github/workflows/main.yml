@@ -20,12 +20,9 @@ jobs:
           KERNEL_VERSION=$(sed -n 's/<!ENTITY version\s*"\(.*\)">/\1/p' "$xml_file")
           MAJOR_VERSION="${KERNEL_VERSION%%.*}"
           UNRAID_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9.]*\)-Unraid">/\1/p' "$xml_file")
-          echo $KERNEL_VERSION
-          echo $MAJOR_VERSION
-          echo $UNRAID_VERSION
           echo "KERNEL_VERSION=$(sed -n 's/<!ENTITY version\s*"\(.*\)">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
-          echo "MAJOR_VERSION=$(MAJOR_VERSION)" >> "$GITHUB_ENV"
-          echo "UNRAID_VERSION=$(UNRAID_VERSION)" >> "$GITHUB_ENV"
+          echo "MAJOR_VERSION='${$(sed -n 's/<!ENTITY version\s*"\(.*\)">/\1/p' "$xml_file")%%.*}'" >> "$GITHUB_ENV"
+          echo "UNRAID_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9.]*\)-Unraid">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
       - name: Setup environment
         shell: bash
         run: |
