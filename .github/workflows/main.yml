@@ -17,6 +17,12 @@ jobs:
             echo "XML file not found: $xml_file"
             exit 1
           fi
+          KERNEL_VERSION=$(sed -n 's/<!ENTITY version\s*"\(.*\)">/\1/p' "$xml_file")
+          MAJOR_VERSION="${numbers%%.*}"
+          UNRAID_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9.]*\)-Unraid">/\1/p' "$xml_file")
+          echo $KERNEL_VERSION
+          echo $MAJOR_VERSION
+          echo $UNRAID_VERSION
           echo "{KERNEL_VERSION}={sed -n 's/<!ENTITY version\s*"\(.*\)">/\1/p' "$xml_file"}" >> "$GITHUB_ENV"
           echo "{MAJOR_VERSION}={${number%%.*}}" >> "$GITHUB_ENV"
           echo "{UNRAID_VERSION}={sed -n 's/<!ENTITY kernel\s*"\([0-9.]*\)-Unraid">/\1/p' "$xml_file"}" >> "$GITHUB_ENV"
