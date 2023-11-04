@@ -18,7 +18,7 @@ jobs:
             exit 1
           fi
           KERNEL_VERSION=$(sed -n 's/<!ENTITY version\s*"\(.*\)">/\1/p' "$xml_file")
-          MAJOR_VERSION="${numbers%%.*}"
+          MAJOR_VERSION="${KERNEL_VERSION%%.*}"
           UNRAID_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9.]*\)-Unraid">/\1/p' "$xml_file")
           echo $KERNEL_VERSION
           echo $MAJOR_VERSION
