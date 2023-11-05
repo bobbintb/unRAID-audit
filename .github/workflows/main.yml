@@ -41,8 +41,8 @@ jobs:
           echo "KERNEL_VERSION=$KERNEL_VERSION" >> "$GITHUB_ENV"
           echo "MAJOR_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9]*\)\..*">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
           echo "UNRAID_VERSION=$UNRAID_VERSION" >> "$GITHUB_ENV"
-          echo "Kernel version: $KERNEL_VERSION]"
-          echo "unRAID version: $UNRAID_VERSION]"
+          echo "Kernel version: $KERNEL_VERSION"
+          echo "unRAID version: $UNRAID_VERSION"
       - name: Compare version numbers
         shell: bash
         run: |
@@ -63,6 +63,7 @@ jobs:
           wget -nvc https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer-$UNRAID_VERSION-x86_64.zip
       - name: Preparing build
         shell: bash
+        if: steps.set_variables.outputs.condition == 'true'
         run: |
           cd unraid
           mkdir -p linux
@@ -81,6 +82,7 @@ jobs:
           sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
       - name: Building new kernel
         shell: bash
+        if: steps.set_variables.outputs.condition == 'true'
         run: |
           cd unraid/linux
           echo "----------------------------------------[make oldconfig]-------------------------------------------------------------"
@@ -96,6 +98,7 @@ jobs:
           #sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
       - name: Update version.config
         shell: bash
+        if: steps.set_variables.outputs.condition == 'true'
         run: |
           echo "KERNEL_VERSION=$KERNEL_VERSION" > versions.config
           echo "UNRAID_VERSION=$UNRAID_VERSION" >> versions.config
