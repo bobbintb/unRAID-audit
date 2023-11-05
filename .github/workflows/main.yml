@@ -35,16 +35,17 @@ jobs:
             echo "XML file not found: $xml_file"
             exit 1
           fi
-          echo "KERNEL_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9.]*\)-Unraid">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
+          KERNEL_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9.]*\)-Unraid">/\1/p' "$xml_file")
+          UNRAID_VERSION$(sed -n 's/<!ENTITY version\s*"\(.*\)">/\1/p' "$xml_file")
+          echo "KERNEL_VERSION=$KERNEL_VERSION" >> "$GITHUB_ENV"
           echo "MAJOR_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9]*\)\..*">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
-          echo "UNRAID_VERSION=$(sed -n 's/<!ENTITY version\s*"\(.*\)">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
+          echo "UNRAID_VERSION=$UNRAID_VERSION" >> "$GITHUB_ENV"
+          echo "----------------------------------------[Kernel version: $KERNEL_VERSION]---------------------------------------------"
+          echo "----------------------------------------[unRAID version: $UNRAID_VERSION]---------------------------------------------"
       - name: Setup environment
         shell: bash
         run: |
           #!/bin/bash
-          echo "----------------------------------------[Kernel version: $KERNEL_VERSION]---------------------------------------------"
-          echo "----------------------------------------[Kernel major version: $MAJOR_VERSION]----------------------------------------"
-          echo "----------------------------------------[unRAID version: $UNRAID_VERSION]---------------------------------------------"
           echo "----------------------------------------[Installing dependencies]-----------------------------------------------------"
           sudo apt -y install make gcc bison libelf-dev
           mkdir -p unraid
