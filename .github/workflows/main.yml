@@ -9,13 +9,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.unRAID_audit }}
-      - name: test
-        shell: bash
-        run: |
-          #!/bin/bash
-          echo "Current working directory:"
-          pwd
-          ls -l
       - name: Get repo version numbers
         shell: bash
         run: |
@@ -28,6 +21,8 @@ jobs:
                   "REPO_UNRAID_VERSION") UNRAID_VERSION="$value" ;;
               esac
           done < "versions.config"
+          echo "Repo kernel version: $REPO_KERNEL_VERSION"
+          echo "Repo unRAID version: $REPO_UNRAID_VERSION"
           echo "REPO_KERNEL_VERSION=$REPO_KERNEL_VERSION" >> "$GITHUB_ENV"
           echo "REPO_UNRAID_VERSION=$REPO_UNRAID_VERSION" >> "$GITHUB_ENV"
       - name: Get latest version numbers
@@ -43,8 +38,6 @@ jobs:
           echo "KERNEL_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9.]*\)-Unraid">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
           echo "MAJOR_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9]*\)\..*">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
           echo "UNRAID_VERSION=$(sed -n 's/<!ENTITY version\s*"\(.*\)">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
-
-
       - name: Setup environment
         shell: bash
         run: |
