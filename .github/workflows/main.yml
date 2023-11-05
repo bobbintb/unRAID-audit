@@ -27,7 +27,7 @@ jobs:
                   "REPO_KERNEL_VERSION") KERNEL_VERSION="$value" ;;
                   "REPO_UNRAID_VERSION") UNRAID_VERSION="$value" ;;
               esac
-          done < "version.config"
+          done < "versions.config"
           echo "REPO_KERNEL_VERSION=$REPO_KERNEL_VERSION" >> "$GITHUB_ENV"
           echo "REPO_UNRAID_VERSION=$REPO_UNRAID_VERSION" >> "$GITHUB_ENV"
       - name: Get latest version numbers
