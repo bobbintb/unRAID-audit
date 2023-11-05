@@ -50,14 +50,15 @@ jobs:
           #!/bin/bash
           if $(dpkg --compare-versions $KERNEL_VERSION gt $REPO_KERNEL_VERSION)
           then
+            echo "UPDATE=True" >> "$GITHUB_ENV"
             echo "::set-output name=condition::true"
           else
             echo "There is no new kernel version. No need to update. Aborting..."
           fi
-          echo "::set-output name=condition::true"
+          echo "UPDATE=True" >> "$GITHUB_ENV"
       - name: Setup environment
         shell: bash
-        if: steps.set_flag.outputs.condition == 'true'
+        if: UPDATE == True
         run: |
           #!/bin/bash
           echo "----------------------------------------[Installing dependencies]-----------------------------------------------------"
@@ -70,7 +71,7 @@ jobs:
           wget -nvc https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer-$UNRAID_VERSION-x86_64.zip
       - name: Preparing build
         shell: bash
-        if: steps.set_flag.outputs.condition == 'true'
+        if: UPDATE == True
         run: |
           cd unraid
           mkdir -p linux
@@ -89,7 +90,7 @@ jobs:
           sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
       - name: Building new kernel
         shell: bash
-        if: steps.set_flag.outputs.condition == 'true'
+        if: UPDATE == True
         run: |
           cd unraid/linux
           echo "----------------------------------------[make oldconfig]-------------------------------------------------------------"
@@ -105,12 +106,12 @@ jobs:
           sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
       - name: Update version.config
         shell: bash
-        if: steps.set_flag.outputs.condition == 'true'
+        if: UPDATE == True
         run: |
           echo "KERNEL_VERSION=$KERNEL_VERSION" > versions.config
           echo "UNRAID_VERSION=$UNRAID_VERSION" >> versions.config
       - name: Git Commit 
-        if: steps.set_flag.outputs.condition == 'true'
+        if: UPDATE == True
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
