@@ -58,7 +58,7 @@ jobs:
           echo "UPDATE=True" >> "$GITHUB_ENV"
       - name: Setup environment
         shell: bash
-        if: UPDATE == True
+        if: $UPDATE == True
         run: |
           #!/bin/bash
           echo "----------------------------------------[Installing dependencies]-----------------------------------------------------"
@@ -71,7 +71,7 @@ jobs:
           wget -nvc https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer-$UNRAID_VERSION-x86_64.zip
       - name: Preparing build
         shell: bash
-        if: UPDATE == True
+        if: $UPDATE == True
         run: |
           cd unraid
           mkdir -p linux
@@ -90,7 +90,7 @@ jobs:
           sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
       - name: Building new kernel
         shell: bash
-        if: UPDATE == True
+        if: $UPDATE == True
         run: |
           cd unraid/linux
           echo "----------------------------------------[make oldconfig]-------------------------------------------------------------"
@@ -106,12 +106,12 @@ jobs:
           sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
       - name: Update version.config
         shell: bash
-        if: UPDATE == True
+        if: $UPDATE == True
         run: |
           echo "KERNEL_VERSION=$KERNEL_VERSION" > versions.config
           echo "UNRAID_VERSION=$UNRAID_VERSION" >> versions.config
       - name: Git Commit 
-        if: UPDATE == True
+        if: $UPDATE == True
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
