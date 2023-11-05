@@ -100,9 +100,9 @@ jobs:
           echo "----------------------------------------[make -j$(nproc) -s]---------------------------------------------------------"
           make -j$(nproc) -s
           cd ..
-          mkdir -p release
-          cp linux/arch/x86_64/boot/bzImage release/bzimage
-          cd release
+          cd ..
+          cp unraid/linux/arch/x86_64/boot/bzImage bzimage
+          rm -dr unraid
           sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
       - name: Update version.config
         shell: bash
@@ -120,7 +120,7 @@ jobs:
           git add unraid/release/bzImage
           git add unraid/release/bzImage.sha256
       - name: Git Push
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@main
         with:
           github_token: ${{ secrets.unRAID_audit }}
           branch: release
