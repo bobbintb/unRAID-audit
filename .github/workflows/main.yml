@@ -8,7 +8,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.unRAID-audit }}
+          token: ${{ secrets.unRAID_audit }}
       - name: test
         shell: bash
         run: |
