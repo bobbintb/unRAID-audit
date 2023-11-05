@@ -18,8 +18,8 @@ jobs:
               key=$(echo "$line" | cut -d'=' -f1)
               value=$(echo "$line" | cut -d'=' -f2)
               case "$key" in
-                  "REPO_KERNEL_VERSION") KERNEL_VERSION="$value" ;;
-                  "REPO_UNRAID_VERSION") UNRAID_VERSION="$value" ;;
+                  "KERNEL_VERSION") REPO_KERNEL_VERSION="$value" ;;
+                  "UNRAID_VERSION") REPO_UNRAID_VERSION="$value" ;;
               esac
           done < "versions.config"
           echo "Repo kernel version: $REPO_KERNEL_VERSION"
