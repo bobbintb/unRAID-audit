@@ -48,58 +48,54 @@ jobs:
         run: |
           #!/bin/bash
           if $(dpkg --compare-versions $KERNEL_VERSION gt REPO_KERNEL_VERSION); then echo "::set-output name=condition::true"; fi
-        id: set_flag
-      - name: Conditional Steps
+      - name: Setup environment
+        shell: bash
         if: steps.set_variables.outputs.condition == 'true'
-        needs: set_flag
-        steps:
-        - name: Setup environment
-          shell: bash
-          run: |
-            #!/bin/bash
-            echo "----------------------------------------[Installing dependencies]-----------------------------------------------------"
-            sudo apt -y install make gcc bison libelf-dev
-            mkdir -p unraid
-            cd unraid
-            echo "----------------------------------------[Downloading kernel...]-------------------------------------------------------"
-            wget -nvc https://mirrors.edge.kernel.org/pub/linux/kernel/v$MAJOR_VERSION.x/linux-$KERNEL_VERSION.tar.xz
-            echo "----------------------------------------[Downloading unRAID...]-------------------------------------------------------"
-            wget -nvc https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer-$UNRAID_VERSION-x86_64.zip
-        - name: Preparing build
-          shell: bash
-          run: |
-            cd unraid
-            mkdir -p linux
-            echo "----------------------------------------[Extracting kernel...]--------------------------------------------------------"
-            tar -xf linux-$KERNEL_VERSION.tar.xz -C linux --strip-components 1
-            unzip unRAIDServer-$UNRAID_VERSION-x86_64.zip -d unRAIDServer
-            echo "----------------------------------------Extracting unRAID...----------------------------------------------------------"
-            cd unRAIDServer
-            echo "----------------------------------------[Unsquashing file system...]--------------------------------------------------"
-            unsquashfs -d patches bzfirmware src
-            cd ..
-            cp -r unRAIDServer/patches/src/linux-*-Unraid/. linux/
-            cd linux
-            echo "----------------------------------------[Patching...]-----------------------------------------------------------------"
-            find . -type f -iname '*.patch' -print0 | xargs -n1 -0 patch -p1 -i
-            sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
-        - name: Building new kernel
-          shell: bash
-          run: |
-              cd unraid/linux
-              echo "----------------------------------------[make oldconfig]-------------------------------------------------------------"
-              make olddefconfig
-              echo "----------------------------------------[make -j$(nproc) -s bzImage]-------------------------------------------------"
-              #make -j$(nproc) -s bzImage
-              echo "----------------------------------------[make -j$(nproc) -s]---------------------------------------------------------"
-              #make -j$(nproc) -s
-              #cd ..
-              #mkdir -p release
-              #cp linux/arch/x86_64/boot/bzImage release/bzimage
-              #cd release
-              #sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
-        - name: Update version.config
-          shell: bash
-          run: |
-              echo "KERNEL_VERSION=$KERNEL_VERSION" > versions.config
-              echo "UNRAID_VERSION=$UNRAID_VERSION" >> versions.config
+        run: |
+          #!/bin/bash
+          echo "----------------------------------------[Installing dependencies]-----------------------------------------------------"
+          sudo apt -y install make gcc bison libelf-dev
+          mkdir -p unraid
+          cd unraid
+          echo "----------------------------------------[Downloading kernel...]-------------------------------------------------------"
+          wget -nvc https://mirrors.edge.kernel.org/pub/linux/kernel/v$MAJOR_VERSION.x/linux-$KERNEL_VERSION.tar.xz
+          echo "----------------------------------------[Downloading unRAID...]-------------------------------------------------------"
+          wget -nvc https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer-$UNRAID_VERSION-x86_64.zip
+      - name: Preparing build
+        shell: bash
+        run: |
+          cd unraid
+          mkdir -p linux
+          echo "----------------------------------------[Extracting kernel...]--------------------------------------------------------"
+          tar -xf linux-$KERNEL_VERSION.tar.xz -C linux --strip-components 1
+          unzip unRAIDServer-$UNRAID_VERSION-x86_64.zip -d unRAIDServer
+          echo "----------------------------------------Extracting unRAID...----------------------------------------------------------"
+          cd unRAIDServer
+          echo "----------------------------------------[Unsquashing file system...]--------------------------------------------------"
+          unsquashfs -d patches bzfirmware src
+          cd ..
+          cp -r unRAIDServer/patches/src/linux-*-Unraid/. linux/
+          cd linux
+          echo "----------------------------------------[Patching...]-----------------------------------------------------------------"
+          find . -type f -iname '*.patch' -print0 | xargs -n1 -0 patch -p1 -i
+          sed -i 's/# CONFIG_AUDIT is not set/CONFIG_AUDIT=y/' .config
+      - name: Building new kernel
+        shell: bash
+        run: |
+          cd unraid/linux
+          echo "----------------------------------------[make oldconfig]-------------------------------------------------------------"
+          make olddefconfig
+          echo "----------------------------------------[make -j$(nproc) -s bzImage]-------------------------------------------------"
+          #make -j$(nproc) -s bzImage
+          echo "----------------------------------------[make -j$(nproc) -s]---------------------------------------------------------"
+          #make -j$(nproc) -s
+          #cd ..
+          #mkdir -p release
+          #cp linux/arch/x86_64/boot/bzImage release/bzimage
+          #cd release
+          #sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
+      - name: Update version.config
+        shell: bash
+        run: |
+          echo "KERNEL_VERSION=$KERNEL_VERSION" > versions.config
+          echo "UNRAID_VERSION=$UNRAID_VERSION" >> versions.config
