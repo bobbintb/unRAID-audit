@@ -120,7 +120,7 @@ jobs:
           git add unraid/release/bzImage
           git add unraid/release/bzImage.sha256
       - name: Git Push
-        uses: ad-m/github-push-action@main
+        uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.unRAID_audit }}
           branch: release
