@@ -5,14 +5,37 @@ jobs:
   Compile_kernel:
     runs-on: ubuntu-latest
     steps:
-      - name: Get version numbers
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.unRAID-audit }}
+      - name: test
+        shell: bash
+        run: |
+          #!/bin/bash
+          echo "Current working directory:"
+          pwd
+          ls -l
+      - name: Get repo version numbers
+        shell: bash
+        run: |
+          #!/bin/bash
+          while IFS= read -r line; do
+              key=$(echo "$line" | cut -d'=' -f1)
+              value=$(echo "$line" | cut -d'=' -f2)
+              case "$key" in
+                  "REPO_KERNEL_VERSION") KERNEL_VERSION="$value" ;;
+                  "REPO_UNRAID_VERSION") UNRAID_VERSION="$value" ;;
+              esac
+          done < "version.config"
+          echo "REPO_KERNEL_VERSION=$REPO_KERNEL_VERSION" >> "$GITHUB_ENV"
+          echo "REPO_UNRAID_VERSION=$REPO_UNRAID_VERSION" >> "$GITHUB_ENV"
+      - name: Get latest version numbers
         shell: bash
         run: |
           #!/bin/bash
           wget "https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer.plg"
-          # Provide the XML file path as a command-line argument
           xml_file="unRAIDServer.plg"
-          # Check if the XML file exists
           if [ ! -f "$xml_file" ]; then
             echo "XML file not found: $xml_file"
             exit 1
@@ -20,6 +43,8 @@ jobs:
           echo "KERNEL_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9.]*\)-Unraid">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
           echo "MAJOR_VERSION=$(sed -n 's/<!ENTITY kernel\s*"\([0-9]*\)\..*">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
           echo "UNRAID_VERSION=$(sed -n 's/<!ENTITY version\s*"\(.*\)">/\1/p' "$xml_file")" >> "$GITHUB_ENV"
+
+
       - name: Setup environment
         shell: bash
         run: |
@@ -68,5 +93,11 @@ jobs:
           #cp linux/arch/x86_64/boot/bzImage release/bzimage
           #cd release
           #sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
+      - name: Update version.config
+        shell: bash
+        run: |
+          echo "KERNEL_VERSION=$KERNEL_VERSION" > versions.config
+          echo "UNRAID_VERSION=$UNRAID_VERSION" >> versions.config
+          
 if $(dpkg --compare-versions "1.10.2" gt "1.5.3"); then echo true; fi
 
