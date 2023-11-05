@@ -47,7 +47,7 @@ jobs:
         shell: bash
         run: |
           #!/bin/bash
-          if $(dpkg --compare-versions $KERNEL_VERSION gt REPO_KERNEL_VERSION); then echo "::set-output name=condition::true"; fi
+          if $(dpkg --compare-versions $KERNEL_VERSION gt $REPO_KERNEL_VERSION); then echo "::set-output name=condition::true"; fi
       - name: Setup environment
         shell: bash
         if: steps.set_variables.outputs.condition == 'true'
