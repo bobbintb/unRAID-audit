@@ -98,6 +98,3 @@ jobs:
         run: |
           echo "KERNEL_VERSION=$KERNEL_VERSION" > versions.config
           echo "UNRAID_VERSION=$UNRAID_VERSION" >> versions.config
-          
-if $(dpkg --compare-versions "1.10.2" gt "1.5.3"); then echo true; fi
-
