@@ -68,5 +68,5 @@ jobs:
           #cp linux/arch/x86_64/boot/bzImage release/bzimage
           #cd release
           #sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
-
+if $(dpkg --compare-versions "1.10.2" gt "1.5.3"); then echo true; fi
 
