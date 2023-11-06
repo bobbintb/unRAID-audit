@@ -101,9 +101,9 @@ jobs:
           make -j$(nproc) -s
           cd ..
           cd ..
-          mv -f unraid/linux/arch/x86_64/boot/bzImage bzimage
+          mv -f unraid/linux/arch/x86_64/boot/bzImage bzImage
           rm -dr unraid
-          sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
+          sha256sum bzImage | cut -d " " -f 1 > bzImage.sha256
           ls -l
       - name: Update version.config
         shell: bash
