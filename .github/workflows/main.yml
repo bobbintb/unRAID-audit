@@ -107,7 +107,7 @@ jobs:
           pwd
           ls -l
           ls -l unraid/linux/arch/x86_64/boot/
-          mv -f unraid/linux/arch/x86_64/boot/bzImage bzImage
+          mv -f unraid/linux/arch/x86_64/boot/bzImage /home/runner/work/unRAID-audit/unRAID-audit/bzImage
           rm -dr unraid
           sha256sum ./bzImage | cut -d " " -f 1 > bzImage.sha256
           ls -l /home/runner/work/unRAID-audit/unRAID-audit
