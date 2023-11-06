@@ -103,7 +103,6 @@ jobs:
           cd ..
           mv -f unraid/linux/arch/x86_64/boot/bzImage bzimage
           rm -dr unraid
-          rm bzimage.sha256
           sha256sum bzimage | cut -d " " -f 1 > bzimage.sha256
           ls -l
       - name: Update version.config
