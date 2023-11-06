@@ -13,6 +13,8 @@ jobs:
         shell: bash
         run: |
           #!/bin/bash
+          pwd
+          ls -l
           while IFS= read -r line; do
               key=$(echo "$line" | cut -d'=' -f1)
               value=$(echo "$line" | cut -d'=' -f2)
@@ -106,7 +108,7 @@ jobs:
           ls -l
           mv -f unraid/linux/arch/x86_64/boot/bzImage bzImage
           rm -dr unraid
-          sha256sum bzImage | cut -d " " -f 1 > bzImage.sha256
+          sha256sum ./bzImage | cut -d " " -f 1 > bzImage.sha256
           ls -l
       - name: Update version.config
         shell: bash
