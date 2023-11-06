@@ -13,7 +13,6 @@ jobs:
         shell: bash
         run: |
           #!/bin/bash
-          ls -l
           while IFS= read -r line; do
               key=$(echo "$line" | cut -d'=' -f1)
               value=$(echo "$line" | cut -d'=' -f2)
@@ -43,6 +42,7 @@ jobs:
           echo "UNRAID_VERSION=$UNRAID_VERSION" >> "$GITHUB_ENV"
           echo "Kernel version: $KERNEL_VERSION"
           echo "unRAID version: $UNRAID_VERSION"
+          rm unRAIDServer.plg
       - name: Compare version numbers
         id: set_flag
         shell: bash
