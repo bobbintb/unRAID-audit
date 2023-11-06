@@ -116,9 +116,11 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git commit -a -m "Updated kernel"
-          git add versions.config
-          git add bzImage
-          git add bzImage.sha256
+          ls -l
+          git add --all
+          #git add versions.config
+          #git add bzImage
+          #git add bzImage.sha256
       - name: Git Push
         uses: ad-m/github-push-action@master
         with:
