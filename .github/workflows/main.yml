@@ -92,6 +92,7 @@ jobs:
         shell: bash
         if: env.UPDATE == 'True'
         run: |
+          pwd
           cd unraid/linux
           echo "----------------------------------------[make oldconfig]-------------------------------------------------------------"
           make olddefconfig
@@ -101,6 +102,8 @@ jobs:
           make -j$(nproc) -s
           cd ..
           cd ..
+          pwd
+          ls -l
           mv -f unraid/linux/arch/x86_64/boot/bzImage bzImage
           rm -dr unraid
           sha256sum bzImage | cut -d " " -f 1 > bzImage.sha256
