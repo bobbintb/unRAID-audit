@@ -59,7 +59,8 @@ jobs:
           else
             echo "There is no new kernel version. No need to update. Aborting..."
           fi
-          echo "UPDATE=True" >> "$GITHUB_ENV"
+          # Uncomment the below line to force the workflow to run.
+          # echo "UPDATE=True" >> "$GITHUB_ENV"
       - name: Setup environment
         shell: bash
         if: env.UPDATE == 'True'
