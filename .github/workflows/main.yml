@@ -112,8 +112,8 @@ jobs:
           ls -l unraid/linux/arch/x86_64/boot/
           mv -f unraid/linux/arch/x86_64/boot/bzImage /home/runner/work/unRAID-audit/unRAID-audit/bzImage
           rm -dr unraid
-          sha256sum $WD/bzImage | cut -d " " -f 1 > bzImage.sha256
           ls -l /home/runner/work/unRAID-audit/unRAID-audit
+          sha256sum $WD/bzImage | cut -d " " -f 1 > bzImage.sha256
           ls -l
       - name: Update version.config
         shell: bash
