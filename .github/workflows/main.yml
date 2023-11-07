@@ -69,6 +69,7 @@ jobs:
           echo "----------------------------------------[Installing dependencies]-----------------------------------------------------"
           sudo apt -y install make gcc bison libelf-dev
           mkdir -p unraid
+          mkdir -p unraid/linux
           cd unraid
           echo "----------------------------------------[Downloading kernel...]-------------------------------------------------------"
           wget -nvc https://mirrors.edge.kernel.org/pub/linux/kernel/v$MAJOR_VERSION.x/linux-$KERNEL_VERSION.tar.xz
@@ -79,7 +80,6 @@ jobs:
         if: env.UPDATE == 'True'
         run: |
           cd unraid
-          mkdir -p linux
           echo "----------------------------------------[Extracting kernel...]--------------------------------------------------------"
           tar -xf linux-$KERNEL_VERSION.tar.xz -C linux --strip-components 1
           unzip unRAIDServer-$UNRAID_VERSION-x86_64.zip -d unRAIDServer
@@ -101,16 +101,18 @@ jobs:
           cd unraid/linux
           echo "----------------------------------------[make oldconfig]-------------------------------------------------------------"
           make olddefconfig
-          echo "----------------------------------------[make -j$(nproc) -s bzImage]-------------------------------------------------"
-          make -j$(nproc) -s bzImage
-          echo "----------------------------------------[make -j$(nproc) -s]---------------------------------------------------------"
-          make -j$(nproc) -s
+          echo "----------------------------------------[make -j$(nproc) bzImage]-------------------------------------------------"
+          make -j$(nproc) bzImage
+          echo "----------------------------------------[make -j$(nproc)]---------------------------------------------------------"
+          make -j$(nproc)
           cd ..
           cd ..
           echo "----------------------------------------[Working directory: $(pwd)]--------------------------------------------------"
           ls -l
           ls -l unraid/linux/arch/x86_64/boot/
-          mv -f unraid/linux/arch/x86_64/boot/bzImage /home/runner/work/unRAID-audit/unRAID-audit/bzImage
+          rm $WD/bzImage
+          rm $WD/bzImage.sha256
+          cp $WD/unraid/linux/arch/x86_64/boot/bzImage $WD/bzImage
           rm -dr unraid
           ls -l /home/runner/work/unRAID-audit/unRAID-audit
           sha256sum $WD/bzImage | cut -d " " -f 1 > bzImage.sha256
