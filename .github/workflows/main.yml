@@ -76,7 +76,7 @@ jobs:
           wget -nvc https://mirrors.edge.kernel.org/pub/linux/kernel/v$MAJOR_VERSION.x/linux-$KERNEL_VERSION.tar.xz
           echo "----------------------------------------[Downloading unRAID...]-------------------------------------------------------"
           echo "stupid manual fix for not being able to download it automatically"
-          wget -nvc https://unraid-dl.sfo2.digitaloceanspaces.com/stable/6.12.6/dc1b0af33b30d3fc31de78a5def0ef44803371876162269bb4b97e537c3c0ec9/unRAIDServer-6.12.6-x86_64.zip
+          wget -nvc https://stable.dl.unraid.net/6.12.10/2c9f5b4333711eb5b0739b8597cfc70a41144ae785d09276b87b14ee9ebee585/unRAIDServer-6.12.10-x86_64.zip
           #wget -nvc https://unraid-dl.sfo2.cdn.digitaloceanspaces.com/stable/unRAIDServer-$UNRAID_VERSION-x86_64.zip
       - name: Preparing build
         shell: bash
